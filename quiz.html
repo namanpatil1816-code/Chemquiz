@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChemQuiz | IUPAC + Hydrocarbons</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#667eea,#764ba2,#00c6ff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:15px;
+}
+
+.container{
+  width:100%;
+  max-width:750px;
+  background:white;
+  border-radius:25px;
+  padding:25px;
+  box-shadow:0 15px 40px rgba(0,0,0,.25);
+}
+
+header{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+header h1{
+  color:#5b4bc4;
+  font-size:32px;
+}
+
+header p{
+  color:#666;
+  margin-top:5px;
+}
+
+.developer{
+  margin-top:8px;
+  font-size:14px;
+  color:#888;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:12px;
+  font-weight:bold;
+}
+
+.progress{
+  height:10px;
+  background:#eee;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#667eea,#00c6ff);
+  transition:.3s;
+}
+
+.timer{
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+  color:#e53935;
+  margin-bottom:15px;
+}
+
+.question{
+  font-size:21px;
+  font-weight:bold;
+  margin-bottom:20px;
+  line-height:1.5;
+}
+
+.option{
+  width:100%;
+  padding:15px;
+  margin:10px 0;
+  border:2px solid #ddd;
+  border-radius:14px;
+  background:#fafafa;
+  text-align:left;
+  font-size:16px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.option:hover{
+  background:#f0edff;
+  border-color:#6c5ce7;
+}
+
+.option.correct{
+  background:#d4edda;
+  border-color:#28a745;
+  color:#155724;
+}
+
+.option.wrong{
+  background:#f8d7da;
+  border-color:#dc3545;
+  color:#721c24;
+}
+
+.option.disabled{
+  pointer-events:none;
+}
+
+.next{
+  width:100%;
+  padding:15px;
+  margin-top:15px;
+  border:0;
+  border-radius:14px;
+  background:#5b4bc4;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.next:hover{
+  background:#4637ad;
+}
+
+.result{
+  display:none;
+  text-align:center;
+}
+
+.result h2{
+  color:#5b4bc4;
+  font-size:30px;
+  margin-bottom:15px;
+}
+
+.score{
+  font-size:45px;
+  font-weight:bold;
+  margin:20px;
+  color:#222;
+}
+
+.message{
+  font-size:18px;
+  margin-bottom:20px;
+}
+
+.restart{
+  padding:15px 30px;
+  border:0;
+  border-radius:14px;
+  background:#00a86b;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.footer{
+  text-align:center;
+  margin-top:20px;
+  color:#999;
+  font-size:13px;
+}
+
+@media(max-width:500px){
+  header h1{
+    font-size:25px;
+  }
+
+  .question{
+    font-size:18px;
+  }
+
+  .container{
+    padding:18px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+  <h1>🧪 ChemQuiz</h1>
+  <p>IUPAC Nomenclature + Hydrocarbons</p>
+  <div class="developer">👨‍💻 Developer: <b>Naman</b></div>
+</header>
+
+<div id="quizBox">
+
+  <div class="top">
+    <span id="questionNo">Question 1 / 100</span>
+    <span id="score">Score: 0</span>
+  </div>
+
+  <div class="progress">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div class="timer">
+    ⏱️ Time: <span id="time">20</span>s
+  </div>
+
+  <div class="question" id="question"></div>
+
+  <div id="options"></div>
+
+  <button class="next" id="nextBtn" onclick="nextQuestion()" style="display:none;">
+    Next Question ➜
+  </button>
+
+</div>
+
+<div class="result" id="result">
+
+  <h2>🎉 Quiz Completed!</h2>
+
+  <div class="score" id="finalScore"></div>
+
+  <div class="message" id="message"></div>
+
+  <button class="restart" onclick="restartQuiz()">
+    🔄 Restart Quiz
+  </button>
+
+</div>
+
+<div class="footer">
+  Class 11 Chemistry • IUPAC + Hydrocarbons
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+/* 1-20 BASIC IUPAC */
+
+{
+q:"CH₄ का IUPAC name क्या है?",
+o:["Methane","Ethane","Propane","Butane"],a:0
+},
+{
+q:"CH₃–CH₃ का IUPAC name क्या है?",
+o:["Methane","Ethane","Propane","Butane"],a:1
+},
+{
+q:"CH₃–CH₂–CH₃ का IUPAC name क्या है?",
+o:["Ethane","Propane","Butane","Pentane"],a:1
+},
+{
+q:"CH₃–CH₂–CH₂–CH₃ का name क्या है?",
+o:["Propane","Butane","Pentane","Ethane"],a:1
+},
+{
+q:"CH₃–CH₂–CH₂–CH₂–CH₃ का name क्या है?",
+o:["Butane","Pentane","Hexane","Propane"],a:1
+},
+{
+q:"Six carbon वाला alkane कौन सा है?",
+o:["Pentane","Hexane","Heptane","Butane"],a:1
+},
+{
+q:"CH₂=CH₂ का IUPAC name क्या है?",
+o:["Ethane","Ethene","Ethyne","Methene"],a:1
+},
+{
+q:"CH₂=CH–CH₃ का name क्या है?",
+o:["Propane","Propene","Propyne","Butene"],a:1
+},
+{
+q:"CH≡CH का name क्या है?",
+o:["Ethane","Ethene","Ethyne","Methyne"],a:2
+},
+{
+q:"CH≡C–CH₃ का name क्या है?",
+o:["Propane","Propene","Propyne","Butyne"],a:2
+},
+{
+q:"Alcohol का functional group क्या है?",
+o:["–CHO","–OH","–COOH","–CO–"],a:1
+},
+{
+q:"CH₃OH का IUPAC name क्या है?",
+o:["Methanol","Ethanol","Propanol","Methanal"],a:0
+},
+{
+q:"CH₃CH₂OH का name क्या है?",
+o:["Methanol","Ethanol","Propanol","Ethanal"],a:1
+},
+{
+q:"CH₃CHO का IUPAC name क्या है?",
+o:["Ethanol","Ethanal","Ethanoic acid","Methanal"],a:1
+},
+{
+q:"CH₃COOH का IUPAC name क्या है?",
+o:["Methanoic acid","Ethanoic acid","Ethanol","Ethanal"],a:1
+},
+{
+q:"Alkane का general formula क्या है?",
+o:["CₙH₂ₙ","CₙH₂ₙ₊₂","CₙH₂ₙ₋₂","CₙHₙ"],a:1
+},
+{
+q:"Alkene का general formula क्या है?",
+o:["CₙH₂ₙ","CₙH₂ₙ₊₂","CₙH₂ₙ₋₂","CₙHₙ"],a:0
+},
+{
+q:"Alkyne का general formula क्या है?",
+o:["CₙH₂ₙ₊₂","CₙH₂ₙ","CₙH₂ₙ₋₂","CₙHₙ"],a:2
+},
+{
+q:"Alkanes में किस प्रकार का bond होता है?",
+o:["Only single","Only double","Only triple","Double + triple"],a:0
+},
+{
+q:"Alkenes में characteristic bond कौन सा है?",
+o:["C–C","C=C","C≡C","C–H"],a:1
+},
+
+/* 21-40 BRANCHED COMPOUNDS */
+
+{
+q:"CH₃–CH(CH₃)–CH₃ का name क्या है?",
+o:["Butane","2-Methylpropane","2-Methylbutane","Propane"],a:1
+},
+{
+q:"CH₃–CH(CH₃)–CH₂–CH₃ का name क्या है?",
+o:["2-Methylbutane","3-Methylbutane","Pentane","2-Ethylpropane"],a:0
+},
+{
+q:"CH₃–CH₂–CH(CH₃)–CH₂–CH₃ का name क्या है?",
+o:["2-Methylpentane","3-Methylpentane","2-Ethylbutane","Hexane"],a:1
+},
+{
+q:"CH₃–C(CH₃)₂–CH₃ का name क्या है?",
+o:["2,2-Dimethylpropane","2-Methylbutane","Pentane","2,3-Dimethylbutane"],a:0
+},
+{
+q:"CH₃–CH(CH₃)–CH(CH₃)–CH₃ का name क्या है?",
+o:["2,3-Dimethylbutane","2-Methylpentane","3-Methylpentane","Hexane"],a:0
+},
+{
+q:"CH₃–CH₂–C(CH₃)₂–CH₂–CH₃ का name क्या है?",
+o:["2,2-Dimethylpentane","3,3-Dimethylpentane","3-Ethylpentane","Heptane"],a:1
+},
+{
+q:"Parent chain चुनते समय सामान्यतः क्या चुना जाता है?",
+o:["Shortest chain","Longest suitable chain","Random chain","Only methyl chain"],a:1
+},
+{
+q:"Numbering किस end से करनी चाहिए?",
+o:["Higher locant मिले","Lowest locant मिले","Always left","Always right"],a:1
+},
+{
+q:"Methyl group का formula क्या है?",
+o:["–CH₃","–CH₂CH₃","–OH","–COOH"],a:0
+},
+{
+q:"Ethyl group का formula क्या है?",
+o:["–CH₃","–CH₂CH₃","–CH₂OH","–CHO"],a:1
+},
+{
+q:"Propyl group का formula क्या है?",
+o:["–CH₃","–CH₂CH₃","–CH₂CH₂CH₃","–OH"],a:2
+},
+{
+q:"Butyl group में कितने carbon होते हैं?",
+o:["1","2","3","4"],a:3
+},
+{
+q:"2-Methylpropane में parent chain में कितने carbon हैं?",
+o:["2","3","4","5"],a:1
+},
+{
+q:"2-Methylbutane का molecular formula क्या है?",
+o:["C₄H₁₀","C₅H₁₂","C₅H₁₀","C₆H₁₄"],a:1
+},
+{
+q:"Butane और 2-methylpropane किस प्रकार के isomers हैं?",
+o:["Position","Chain","Functional","Optical"],a:1
+},
+{
+q:"Pentane के chain isomers कितने हैं?",
+o:["2","3","4","5"],a:1
+},
+{
+q:"सबसे stable alkane में carbon hybridisation क्या है?",
+o:["sp","sp²","sp³","dsp²"],a:2
+},
+{
+q:"Alkane में C–C bond किस प्रकार का होता है?",
+o:["Sigma","Pi","Double","Triple"],a:0
+},
+{
+q:"Alkene में double bond में कितने sigma और pi bonds होते हैं?",
+o:["2σ","1σ + 1π","2π","1σ"],a:1
+},
+{
+q:"Alkyne triple bond में कितने sigma और pi bonds होते हैं?",
+o:["1σ + 2π","2σ + 1π","3σ","3π"],a:0
+},
+
+/* 41-60 ALKENES & ALKYNES */
+
+{
+q:"CH₃–CH=CH–CH₃ का name क्या है?",
+o:["But-1-ene","But-2-ene","Butane","But-1-yne"],a:1
+},
+{
+q:"CH₂=CH–CH₂–CH₃ का name क्या है?",
+o:["But-1-ene","But-2-ene","Butane","Butyne"],a:0
+},
+{
+q:"CH₃–CH₂–CH=CH–CH₃ का name क्या है?",
+o:["Pent-1-ene","Pent-2-ene","Pentane","Pent-3-ene"],a:1
+},
+{
+q:"CH₂=C(CH₃)–CH₂–CH₃ का name क्या है?",
+o:["2-Methylbut-1-ene","3-Methylbut-1-ene","2-Methylbut-2-ene","Pentene"],a:0
+},
+{
+q:"CH₂=CH–CH₂–CH₂–CH₃ का name क्या है?",
+o:["Pent-1-ene","Pent-2-ene","Pentane","Pent-1-yne"],a:0
+},
+{
+q:"CH≡C–CH₂–CH₃ का name क्या है?",
+o:["But-1-yne","But-2-yne","But-1-ene","Butane"],a:0
+},
+{
+q:"CH₃–C≡C–CH₃ का name क्या है?",
+o:["But-1-yne","But-2-yne","But-1-ene","Butane"],a:1
+},
+{
+q:"CH≡C–CH(CH₃)–CH₃ का name क्या है?",
+o:["2-Methylbut-1-yne","3-Methylbut-1-yne","3-Methylbut-2-yne","Pent-1-yne"],a:1
+},
+{
+q:"Double bond की position को किस suffix से दर्शाते हैं?",
+o:["-ane","-ene","-yne","-ol"],a:1
+},
+{
+q:"Triple bond की position को किस suffix से दर्शाते हैं?",
+o:["-ane","-ene","-yne","-al"],a:2
+},
+{
+q:"Alkene में carbon की hybridisation होती है:",
+o:["sp³","sp²","sp","sp³d"],a:1
+},
+{
+q:"Alkyne में carbon की hybridisation होती है:",
+o:["sp","sp²","sp³","dsp²"],a:0
+},
+{
+q:"Ethene में प्रत्येक carbon के चारों ओर geometry कैसी होती है?",
+o:["Linear","Trigonal planar","Tetrahedral","Octahedral"],a:1
+},
+{
+q:"Ethyne की geometry कैसी होती है?",
+o:["Linear","Bent","Trigonal planar","Tetrahedral"],a:0
+},
+{
+q:"Ethane की geometry carbon के around कैसी होती है?",
+o:["Linear","Trigonal planar","Tetrahedral","Square planar"],a:2
+},
+{
+q:"But-2-ene किस प्रकार की stereoisomerism दिखा सकता है?",
+o:["Geometrical","Optical only","Chain only","Functional only"],a:0
+},
+{
+q:"Geometrical isomerism का मुख्य कारण क्या है?",
+o:["Free rotation","Restricted rotation","Hydrogen bonding","Ionic bond"],a:1
+},
+{
+q:"C=C के दोनों carbons पर क्या condition होनी चाहिए?",
+o:["Two identical groups","Two different groups on each carbon","Only H atoms","No substituent"],a:1
+},
+{
+q:"cis और trans किससे संबंधित हैं?",
+o:["Chain isomerism","Geometrical isomerism","Functional isomerism","Metamerism"],a:1
+},
+{
+q:"But-2-ene में geometrical isomers की संख्या कितनी है?",
+o:["1","2","3","4"],a:1
+},
+
+/* 61-75 ISOMERISM */
+
+{
+q:"Same molecular formula but different structural arrangement कहलाता है:",
+o:["Isomerism","Polymerism","Allotropy","Hybridisation"],a:0
+},
+{
+q:"Carbon skeleton बदलने पर कौन सा isomerism होता है?",
+o:["Chain","Position","Functional","Optical"],a:0
+},
+{
+q:"Double bond की position बदलने पर कौन सा isomerism होता है?",
+o:["Chain","Position","Functional","Optical"],a:1
+},
+{
+q:"Ethanol और dimethyl ether किस प्रकार के isomers हैं?",
+o:["Chain","Position","Functional","Geometrical"],a:2
+},
+{
+q:"But-1-ene और But-2-ene किस प्रकार के isomers हैं?",
+o:["Chain","Position","Functional","Optical"],a:1
+},
+{
+q:"Stereoisomerism में क्या same रहता है?",
+o:["Connectivity","Molecular formula only","Atoms अलग","Functional group हमेशा अलग"],a:0
+},
+{
+q:"Optical isomerism किससे संबंधित है?",
+o:["Chiral centre","Only double bond","Only triple bond","Chain length"],a:0
+},
+{
+q:"Structural isomerism का example कौन सा है?",
+o:["Butane & 2-methylpropane","cis/trans but-2-ene","Enantiomers","None"],a:0
+},
+{
+q:"Metamerism मुख्यतः किसमें देखा जाता है?",
+o:["Compounds with polyvalent functional groups","Only alkanes","Only alkenes","Only alkynes"],a:0
+},
+{
+q:"C₄H₁₀ के structural isomers कितने हैं?",
+o:["1","2","3","4"],a:1
+},
+{
+q:"C₃H₈ के structural isomers कितने हैं?",
+o:["1","2","3","4"],a:0
+},
+{
+q:"C₂H₆O के common functional isomers कौन से हैं?",
+o:["Ethanol and dimethyl ether","Ethene and ethyne","Methanol and methane","None"],a:0
+},
+{
+q:"Chain isomerism में क्या बदलता है?",
+o:["Carbon skeleton","Functional group only","Molecular formula","Atomic number"],a:0
+},
+{
+q:"Position isomerism में molecular formula:",
+o:["Changes","Remains same","Doubles","Becomes zero"],a:1
+},
+{
+q:"Functional isomerism में molecular formula:",
+o:["Same","Always different","No carbon","No hydrogen"],a:0
+},
+
+/* 76-90 HYDROCARBON REACTIONS */
+
+{
+q:"Hydrocarbons में केवल किन elements होते हैं?",
+o:["C and H","C and O","H and O","C, H and O"],a:0
+},
+{
+q:"Saturated hydrocarbons कौन से हैं?",
+o:["Alkanes","Alkenes","Alkynes","Arenes only"],a:0
+},
+{
+q:"Unsaturated hydrocarbons में क्या होता है?",
+o:["Only single bonds","Double or triple bond","No carbon","Only ionic bonds"],a:1
+},
+{
+q:"Alkenes की characteristic reaction कौन सी है?",
+o:["Addition","Substitution only","Neutralisation","Precipitation"],a:0
+},
+{
+q:"Alkanes सामान्यतः कौन सी reaction देते हैं?",
+o:["Substitution","Addition only","Neutralisation","Esterification"],a:0
+},
+{
+q:"Alkene + H₂ → Alkane reaction कहलाती है:",
+o:["Hydrogenation","Halogenation","Hydration","Oxidation"],a:0
+},
+{
+q:"Alkene में H₂ जोड़ने के लिए commonly catalyst कौन सा है?",
+o:["Ni/Pt/Pd","NaCl","H₂O","CO₂"],a:0
+},
+{
+q:"Ethene + H₂ → ?",
+o:["Methane","Ethane","Ethyne","Ethanol"],a:1
+},
+{
+q:"Ethene + Br₂ का मुख्य product क्या होगा?",
+o:["Bromoethane","1,2-Dibromoethane","Ethane","Ethanol"],a:1
+},
+{
+q:"Alkene में water addition से सामान्यतः क्या बनता है?",
+o:["Alcohol","Alkane only","Alkyne","Aldehyde only"],a:0
+},
+{
+q:"Markovnikov rule मुख्यतः किस reaction में उपयोगी है?",
+o:["Addition of HX to unsymmetrical alkene","Alkane combustion","Substitution of methane","Polymer burning"],a:0
+},
+{
+q:"Propene + HBr में सामान्य Markovnikov product क्या है?",
+o:["1-Bromopropane","2-Bromopropane","3-Bromopropane","Bromoethane"],a:1
+},
+{
+q:"Methane का complete combustion product क्या है?",
+o:["CO₂ + H₂O","CO + H₂","C + H₂","CH₃OH"],a:0
+},
+{
+q:"Incomplete combustion से poisonous gas कौन सी बन सकती है?",
+o:["CO","CO₂ only","O₂","N₂"],a:0
+},
+{
+q:"Alkenes का polymerisation किस प्रकार की reaction है?",
+o:["Addition polymerisation","Substitution","Neutralisation","Combustion"],a:0
+},
+
+/* 91-100 AROMATIC + MIXED */
+
+{
+q:"Benzene का molecular formula क्या है?",
+o:["C₆H₆","C₆H₁₂","C₆H₁₄","C₅H₆"],a:0
+},
+{
+q:"Benzene को किस category में रखा जाता है?",
+o:["Aromatic hydrocarbon","Alkane","Alkyne","Alcohol"],a:0
+},
+{
+q:"Benzene ring में carbon atoms कितने हैं?",
+o:["4","5","6","7"],a:2
+},
+{
+q:"Benzene की shape कैसी होती है?",
+o:["Linear","Planar hexagonal","Tetrahedral","Cubic"],a:1
+},
+{
+q:"Benzene में सभी C–C bonds की length:",
+o:["Completely different","Equal due to delocalisation","Zero","Only single"],a:1
+},
+{
+q:"Toluene का IUPAC name क्या है?",
+o:["Methylbenzene","Ethylbenzene","Phenylmethane","Cyclohexane"],a:0
+},
+{
+q:"Benzene से C₆H₅– group को क्या कहते हैं?",
+o:["Methyl","Phenyl","Ethyl","Vinyl"],a:1
+},
+{
+q:"Cyclohexane का molecular formula क्या है?",
+o:["C₆H₆","C₆H₁₂","C₆H₁₄","C₅H₁₀"],a:1
+},
+{
+q:"Cycloalkanes का general formula क्या है?",
+o:["CₙH₂ₙ","CₙH₂ₙ₊₂","CₙH₂ₙ₋₂","CₙHₙ"],a:0
+},
+{
+q:"IUPAC nomenclature में benzene ring पर two identical substituents होने पर positions को किस तरह लिखा जा सकता है?",
+o:["1,2 / 1,3 / 1,4","Only 1,1","Only 2,2","Only 3,3"],a:0
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let time = 20;
+let timer;
+let answered = false;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const timeEl = document.getElementById("time");
+const scoreEl = document.getElementById("score");
+const questionNoEl = document.getElementById("questionNo");
+const progressBar = document.getElementById("progressBar");
+
+function loadQuestion(){
+
+  answered = false;
+  clearInterval(timer);
+
+  time = 20;
+  timeEl.textContent = time;
+
+  const q = questions[currentQuestion];
+
+  questionNoEl.textContent =
+    `Question ${currentQuestion+1} / ${questions.length}`;
+
+  questionEl.textContent = q.q;
+
+  optionsEl.innerHTML = "";
+
+  q.o.forEach((option,index)=>{
+
+    const button = document.createElement("button");
+
+    button.className = "option";
+    button.textContent =
+      String.fromCharCode(65+index) + ". " + option;
+
+    button.onclick = () => selectAnswer(index,button);
+
+    optionsEl.appendChild(button);
+
+  });
+
+  nextBtn.style.display = "none";
+
+  const progress =
+    ((currentQuestion) / questions.length) * 100;
+
+  progressBar.style.width = progress + "%";
+
+  startTimer();
+}
+
+function startTimer(){
+
+  timer = setInterval(()=>{
+
+    time--;
+    timeEl.textContent = time;
+
+    if(time <= 0){
+
+      clearInterval(timer);
+
+      if(!answered){
+        answered = true;
+
+        const buttons =
+          document.querySelectorAll(".option");
+
+        buttons.forEach(b=>b.classList.add("disabled"));
+
+        buttons[questions[currentQuestion].a]
+          .classList.add("correct");
+
+        nextBtn.style.display = "block";
+      }
+
+    }
+
+  },1000);
+}
+
+function selectAnswer(index,button){
+
+  if(answered) return;
+
+  answered = true;
+
+  clearInterval(timer);
+
+  const correct =
+    questions[currentQuestion].a;
+
+  const buttons =
+    document.querySelectorAll(".option");
+
+  buttons.forEach(b=>b.classList.add("disabled"));
+
+  if(index === correct){
+
+    button.classList.add("correct");
+    score++;
+
+  }else{
+
+    button.classList.add("wrong");
+    buttons[correct].classList.add("correct");
+
+  }
+
+  scoreEl.textContent =
+    "Score: " + score;
+
+  nextBtn.style.display = "block";
+}
+
+function nextQuestion(){
+
+  currentQuestion++;
+
+  if(currentQuestion >= questions.length){
+
+    showResult();
+
+  }else{
+
+    loadQuestion();
+
+  }
+}
+
+function showResult(){
+
+  clearInterval(timer);
+
+  document.getElementById("quizBox")
+    .style.display = "none";
+
+  document.getElementById("result")
+    .style.display = "block";
+
+  document.getElementById("finalScore")
+    .textContent =
+    score + " / " + questions.length;
+
+  let percentage =
+    (score / questions.length) * 100;
+
+  let message;
+
+  if(percentage >= 90){
+
+    message = "🔥 Outstanding! Chemistry Champion!";
+
+  }else if(percentage >= 75){
+
+    message = "👏 Excellent! Very strong preparation.";
+
+  }else if(percentage >= 50){
+
+    message = "👍 Good! Keep revising and practicing.";
+
+  }else{
+
+    message = "📚 Keep practicing. You can improve!";
+
+  }
+
+  document.getElementById("message")
+    .textContent = message;
+}
+
+function restartQuiz(){
+
+  currentQuestion = 0;
+  score = 0;
+
+  scoreEl.textContent = "Score: 0";
+
+  document.getElementById("result")
+    .style.display = "none";
+
+  document.getElementById("quizBox")
+    .style.display = "block";
+
+  loadQuestion();
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>    
